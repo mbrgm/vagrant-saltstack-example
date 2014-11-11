@@ -42,16 +42,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
 
-  config.vm.define "minion1" do |node|
+  minions = [ 'minion1' ]
 
-    node.vm.box      = "ubuntu-14.10-server-64"
-    node.vm.hostname = "minion1"
 
-    node.vm.provision :salt do |salt|
-      salt.minion_key = "./salt/keys/minion1/minion.pem"
-      salt.minion_pub = "./salt/keys/minion1/minion.pub"
+  minions.each do |hostname|
+    config.vm.define hostname do |node|
+
+      node.vm.box      = "ubuntu-14.10-server-64"
+      node.vm.hostname = hostname 
+
+      node.vm.provision :salt do |salt|
+        salt.minion_key = "./salt/keys/#{hostname}/minion.pem"
+        salt.minion_pub = "./salt/keys/#{hostname}/minion.pub"
+      end
+
     end
-
   end
 
 end
