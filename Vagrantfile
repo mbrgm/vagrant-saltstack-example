@@ -35,6 +35,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Machines
   #==============
   
+  # Set array of hostnames
+  minions = [ 'minion1' ]
+
   #-----------------
   # Salt master
   #-----------------
@@ -50,10 +53,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     node.vm.provision :salt do |salt|
 
       salt.install_master = true
-      salt.seed_master = {
-        "master1" => "./salt/keys/master1/minion.pub",
-        "minion1" => "./salt/keys/minion1/minion.pub"
-      }
+
+      master_keys_hash = { "master1" => "./salt/keys/master1/minion.pub" }
+      minion_keys_hash = Hash[minions.map{
+        |hostname| [hostname, "./salt/keys/#{hostname}/minion.pub"]
+      }]
+
+      salt.seed_master = master_keys_hash.merge(minion_keys_hash)
 
       salt.minion_key = "./salt/keys/master1/minion.pem"
       salt.minion_pub = "./salt/keys/master1/minion.pub"
@@ -66,9 +72,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #------------------
   # Salt minions
   #------------------
-
-  # Set array of hostnames
-  minions = [ 'minion1' ]
 
   # Create a machine for each hostname
   minions.each do |hostname|
