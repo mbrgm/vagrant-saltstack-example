@@ -6,7 +6,9 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.hostmanager.enabled = false
+  config.vm.network :private_network, type: "dhcp"
+
+  config.hostmanager.enabled = true
   config.hostmanager.ignore_private_ip = false
   config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
     if vm.id
@@ -14,8 +16,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
   config.vm.provision :hostmanager
-
-  config.vm.network :private_network, type: "dhcp"
 
 
   config.vm.define "master1" do |node|
