@@ -6,11 +6,19 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
+  #===================
+  # Package cache
+  #===================
+
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.scope = :box
   end
 
   
+  #================
+  # Networking
+  #================
+
   config.vm.network :private_network, type: "dhcp"
 
   config.hostmanager.enabled = true
@@ -22,6 +30,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   config.vm.provision :hostmanager
 
+  
+  #==============
+  # Machines
+  #==============
+  
+  #-----------------
+  # Salt master
+  #-----------------
 
   config.vm.define "master1" do |node|
 
@@ -46,10 +62,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   end
 
+  
+  #------------------
+  # Salt minions
+  #------------------
 
+  # Set array of hostnames
   minions = [ 'minion1' ]
 
-
+  # Create a machine for each hostname
   minions.each do |hostname|
     config.vm.define hostname do |node|
 
